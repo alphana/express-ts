@@ -15,7 +15,7 @@ class ServerConfiguration {
     protected server: http.Server;
     private routes: string[] = [];
     private corsOptions = {
-        origin: "https://api.mysite.com/",
+        origin: "https://challange-getir.herokuapp.com/",
         optionsSuccessStatus: 200
     };
 
