@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: Getir API Challenge
+  description: Backend API example RESTful API with a single endpoint that fetches the data in the provided MongoDB collection and return the results in the requested format.
+  contact:
+    email: alphan.arslan@gmail.com
+  version: 1.0.0
+servers:
+  - url: /api
+
+tags:
+  - name: record
+    description: record APIs
+
+paths:
+  /api/record:
+    post:
+      tags:
+        - record
+      operationId: getAggregatedRecords
+      description: The request payload will include a JSON with 4 fields.“startDate” and “endDate” fields will contain the date in a “YYYY-MM-DD” format. The endpoints filters the data using “createdAt” “minCount” and “maxCount” are for filtering the data. Sum of the “count” array in the documents should be between “minCount” and “maxCount”.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filter'
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordsPayload'
+        204:
+          description: Success with an empty records field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordsPayload'
+        500:
+          description: Internal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailResponse'
+
+
+components:
+
+  schemas:
+    Filter:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        minCount:
+          type: number
+        maxCount:
+          type: number
+
+    RecordsPayload:
+      type: object
+      additionalProperties: false
+      required:
+        - message
+      properties:
+        code:
+          type: number
+          description: "for status of the request. 0 means success. Other values may be used for errors that you define."
+        msg:
+          type: string
+          description: "the description of the code. It's set to “success” for successful requests. For unsuccessful requests ist's set to “fail”"
+        records:
+          type: array
+          description: "“records” will include all the filtered items according to the request"
+          items:
+            $ref: '#/components/schemas/RecordsResponse'
+
+
+    RecordsResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        createdAt:
+          type: string
+          format: date
+        totalCounts:
+          type: number
+
+
+    FailResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
